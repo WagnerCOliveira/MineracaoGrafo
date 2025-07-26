@@ -5,6 +5,4 @@ pandas
 ipykernel
 jupyterlab
 scipy
-cupy-cuda12x
-nx-cugraph-cu12
 tqdm
