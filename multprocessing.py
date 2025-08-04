@@ -7,7 +7,7 @@ import time
 def media_distancias_entre_pares(lcc_):
     """Média das Distâncias entre Pares"""
 
-    if nx.is_connected(G):        
+    if nx.is_connected(lcc_):        
         print("A rede é conectada.")
         avg_path_length_estimate = nx.average_shortest_path_length(lcc_)   
         return print(f"Média das Distâncias entre Pares: {avg_path_length_estimate:.2f} passos")  
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     # Calcula quantos nós correspondem a 20% do LCC
     # Usamos int() para garantir que o resultado seja um número inteiro
-    num_nodes_to_sample = int(LCC_subgraph.number_of_nodes() * 0.20)
+    num_nodes_to_sample = int(LCC_subgraph.number_of_nodes() * 0.05)
 
     # Seleciona aleatoriamente 'num_nodes_to_sample' nós da lista, sem reposição
     sampled_nodes = random.sample(lcc_node_list, k=num_nodes_to_sample)
