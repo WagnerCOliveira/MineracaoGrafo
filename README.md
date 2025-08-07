@@ -8,7 +8,7 @@ Tabela de conteúdos
    * [Instalação Pacotes](#instalação-de-pacotes)
    * [Acessando Virtualenv](#acessando-virtualenv---wsl-linux)
    * [Baixando e Descompactador de Arquivos](#baixando-e-descompactador-de-arquivos)
-   * [Atividade 1 - Disciplina de Mineração em Grafo](#atividade-1---disciplina-de-mineração-em-grafo)
+   * [Atividade - Disciplina de Mineração em Grafo](#atividade-1---disciplina-de-mineração-em-grafo)
    * [Estatística Descritiva de Redes Empíricas Utilizando NetworkX](#análise-estatística-descritiva-de-redes-empíricas-utilizando-networkx)
    * [Referências](#referências)
    * [Contribuição](#contribuição)
@@ -131,6 +131,14 @@ Fazer o download do conjunto de redes empiricas https://networksciencebook.com/t
     * Distância média entre todos os pares de nós na rede.
   * Diâmetro: 
     * A maior distância entre todos os pares de nós na rede, representando o tamanho geral da rede.
+  * Escolher uma rede das 10 redes empiricas e calcular a centradilidade dos nodos usando: 
+    * Autovetor
+    * Katz 
+    * PageRank
+    * Betwenness
+    * Calcular a media delas assim como plotar o histograma.
+  * Desenhar o subgrafo com os 1000 nodos com maior PageRank. 
+    * A cor do nodo deve representar o seu valor de PageRank. Usar a rede do item (g).
 
 
 Análise Estatística Descritiva de Redes Empíricas Utilizando NetworkX
@@ -293,44 +301,45 @@ Figura 2: Distribuição de Graus em Escala Log-Log
 Este gráfico de dispersão é indispensável para identificar se a rede empírica exibe uma distribuição de graus de lei de potência (scale-free). Se os pontos de dados se aproximam de uma linha reta nesta escala, isso sugere fortemente a presença de nós "hub" e tem implicações profundas para a robustez da rede e o fluxo de informações. Esta visualização é crítica para distinguir redes empíricas de modelos teóricos de grafos aleatórios.  
 A forma identificada da distribuição de graus possui implicações profundas para a resiliência da rede e a propagação de informações. Redes de lei de potência (scale-free) são notavelmente robustas a falhas aleatórias de nós, pois a remoção de um nó aleatório é improvável de atingir um hub. No entanto, elas são altamente vulneráveis a ataques direcionados a seus nós hub críticos. Em contraste, redes aleatórias são mais suscetíveis à fragmentação por remoção aleatória de nós. Além disso, os hubs em redes de lei de potência atuam como emissores eficientes, facilitando a rápida disseminação de informações ou doenças. Essa relação direta de causa e efeito entre a propriedade estrutural da rede (distribuição de graus) e suas características funcionais (robustez, difusão) é um aspecto crucial da análise.
 
-### **E. Média das Distâncias entre Pares (Average Shortest Path Length)**
+### **E. Média das Distâncias entre Pares (Average Shortest Path Length - ASPL)**
 
-A média das distâncias entre pares (ASPL), denotada como ⟨L⟩, é definida como o número médio de passos (arestas) ao longo dos caminhos mais curtos para todos os pares possíveis de nós na rede. Serve como uma medida crucial da eficiência da rede no transporte de informações ou massa. Um ASPL menor geralmente indica uma rede mais eficiente, interconectada e facilmente navegável, onde a informação pode viajar rapidamente entre quaisquer dois pontos.
+A média das distâncias entre pares, denotada como ⟨L⟩, é definida como o número médio de passos (arestas) ao longo dos caminhos mais curtos para todos os pares possíveis de nós na rede. Serve como uma medida crucial da eficiência da rede no transporte de informações ou massa. Um ASPL menor geralmente indica uma rede mais eficiente, interconectada e facilmente navegável, onde a informação pode viajar rapidamente entre quaisquer dois pontos.
 
 O NetworkX fornece a função nx.average\_shortest\_path\_length(G, weight=None, method=None) para este cálculo. No entanto, é crucial observar que esta função é definida para grafos conectados. Ela levanta um
 
 NetworkXError se o grafo não for conectado (para grafos não direcionados) ou não for fortemente conectado (para grafos direcionados).
 
-**Manuseio de Grafos Desconectados:** Se a rede empírica for desconectada, o ASPL para o grafo inteiro é indefinido. Nesses casos, a prática padrão é calcular o ASPL para cada componente conectado. O relatório deve primeiro identificar esses componentes (e.g., usando nx.connected\_components(G) para grafos não direcionados ou nx.strongly\_connected\_components(G) para grafos direcionados) e, em seguida, aplicar a função a cada componente com mais de um nó.
+**Manuseio de Grafos Desconectados:** Se a rede for desconectada, o ASPL para o grafo inteiro é indefinido. Nesses casos, a prática padrão é calcular o LCC para o maior componente conectado. O relatório deve primeiro identificar esses componentes (usando nx.connected_components(G) para grafos não direcionados e em seguida, achar o maior componente conectado com a função MAX e parametro key=len, logo após criase um subgrafo com o maior componente conectado e por fim calcula o ASPL.
 
 ~~~Python
 
-if nx.is_connected(G):  
-    avg_path_length = nx.average_shortest_path_length(G)  
-    print(f"Média das Distâncias entre Pares: {avg_path_length:.2f} passos")  
-else:  
-    print("A rede é desconectada. Calculando a Média das Distâncias entre Pares para cada componente conectado.")  
-    aspl_components =  
-    for i, component in enumerate(nx.connected_components(G)):  
-        subgraph = G.subgraph(component).copy() # Usar.copy() para evitar modificar o grafo original  
-        if len(subgraph) > 1: # ASPL é indefinido para componentes de nó único  
-            component_aspl = nx.average_shortest_path_length(subgraph)  
-            aspl_components.append(component_aspl)  
-            print(f"  Componente {i+1} (N={len(subgraph)}): {component_aspl:.2f} passos")  
-    if aspl_components:  
-        print(f"Média das Distâncias entre Pares (componentes): {np.mean(aspl_components):.2f} passos")  
+def media_distancias_entre_pares(lcc_):
+    """Média das Distâncias entre Pares"""
+
+    if nx.is_connected(lcc_):        
+        print("A rede é conectada.")
+        avg_path_length_estimate = nx.average_shortest_path_length(lcc_)   
+        return print(f"Média das Distâncias entre Pares: {avg_path_length_estimate:.2f} passos")  
     else:  
-        print("Nenhum componente com mais de um nó para calcular a ASPL.")
+        print("A rede é desconectada.")        
+        componentes = nx.connected_components(lcc_)
+        maior_comp_nodes = max(componentes, key=len)
+        
+        print('Cria um subgrafo com o MAX correspondente para analise')
+        componente_maior = lcc_.subgraph(maior_comp_nodes).copy()
+        
+        print(f"Novo subgrafo criado com {componente_maior.number_of_nodes()} nós e {componente_maior.number_of_edges()} arestas.")
+        avg_path_length_estimate = nx.average_shortest_path_length(componente_maior)
+        return print(f"Média das Distâncias entre Pares: {avg_path_length_estimate:.2f} passos")
 ~~~
-Assumindo que a rede é conectada ou que o ASPL é calculado para seus componentes, a média das distâncias entre pares é X passos. Um ASPL curto, especialmente quando combinado com um coeficiente de agrupamento relativamente alto (uma medida de interconectividade local, embora não explicitamente solicitada, é uma métrica complementar comum), é a característica definidora das redes de "mundo pequeno". Essa propriedade, observada em muitas redes do mundo real (e.g., redes sociais, redes biológicas, a Internet), implica alta navegabilidade e processos de difusão eficientes, onde a informação ou influência pode se espalhar rapidamente por todo o sistema, apesar de seu grande tamanho.
+
+Assumindo que a rede é conectada ou que o ASPL é calculado para seus componentes, a média das distâncias entre pares. 
 
 ### **F. Diâmetro da Rede (Diameter)**
 
 O diâmetro de uma rede é definido como o caminho mais curto mais longo entre quaisquer dois nós na rede. Ele representa a separação máxima ou a "distância" que a informação ou influência deve percorrer dentro da rede. É uma métrica crítica para entender a compactação geral da rede, sua eficiência e potenciais gargalos. Um diâmetro menor geralmente indica uma rede mais interconectada e eficiente.
 
-O NetworkX fornece a função nx.diameter(G, e=None, usebounds=False, weight=None). Assim como o ASPL,
-
-nx.diameter() é definida para grafos conectados e levanta um NetworkXError se o grafo não for conectado (para grafos não direcionados) ou não for fortemente conectado (para grafos direcionados).
+O NetworkX fornece a função nx.diameter(G, e=None, usebounds=False, weight=None). Assim como o ASPL, nx.diameter() é definida para grafos conectados e levanta um NetworkXError se o grafo não for conectado (para grafos não direcionados) ou não for fortemente conectado (para grafos direcionados).
 
 **Manuseio de Grafos Desconectados:** Para grafos desconectados, o diâmetro é tecnicamente infinito. Na análise de redes prática, o diâmetro é tipicamente calculado para o maior componente conectado, pois ele representa o "alcance" máximo dentro da parte mais extensa da rede. O NetworkX também oferece nx.algorithms.approximation.distance\_measures.diameter(), que calcula um limite inferior para o diâmetro e pode ser usado para grafos muito grandes onde o cálculo exato é inviável, mas também levanta um erro para grafos desconectados.
 
@@ -353,3 +362,154 @@ else:
 
 O diâmetro da rede é D passos. Um diâmetro grande, especialmente em relação ao tamanho da rede, pode indicar uma rede menos eficiente onde a informação ou os recursos podem levar um número significativo de passos para atravessar de um extremo ao outro. Isso destaca potenciais gargalos estruturais ou áreas onde o fluxo de comunicação pode ser lento. Por outro lado, um diâmetro pequeno, particularmente em redes grandes, reforça a propriedade de "mundo pequeno" (discutida com o ASPL) e sugere alta navegabilidade, onde quaisquer dois nós podem ser alcançados rapidamente. Essa conexão entre o diâmetro numérico e as implicações práticas para o design da rede, os protocolos de comunicação e o desempenho geral é um aspecto crucial.
 
+### G. Escolher uma rede das 10 redes empiricas e calcular a centradilidade dos nodos usando: Autovetor, Katz, PageRank, Betwenness. Calcular a media delas assim como plotar o histograma.
+
+* ### Escolhida a rede phonecalls
+
+#### Centradilidade Autovetor.
+
+Mede a influência de um vertice na rede. atravez de dois fatores:
+
+* Seu grau 
+* Importância dos seus vizinhos.
+
+~~~Python
+eigenvector_centrality = nx.eigenvector_centrality(lcc_)
+~~~
+
+### Centradilidade Katz.
+
+Tem o mesmo principio do autovetor, porem, a diferença é que, inicialmente, defini-se uma pequena quantidade de centralidade para cada vértice da rede.
+
+Apresentou o segunte erro:
+
+erro: (PowerIterationFailedConvergence(...), 'power iteration failed to converge within 100 iterations')
+
+Aprendido: A centralidade de Katz não é calculada com uma fórmula simples e direta. Em vez disso, ela é encontrada usando um processo iterativo chamado Iteração de Potência (Power Iteration). O algoritmo começa com uma estimativa inicial para os scores de centralidade e refina essa estimativa repetidamente a cada passo (ou "iteração"). Ele para quando os scores mudam muito pouco entre uma iteração e a seguinte (o que significa que eles "convergiram" para uma solução).
+
+#### Código
+
+Solucionando erro **power iteration failed to converge** definindo um alpha menor que o valor padrão de 1, que não atendeu e apresentou esse erro.
+
+A resolução foi preciso obter a matriz de adjacência em um formato que o SciPy, foi calculado o maior autovalor (utilizando linalg.eigs), k=1 significa que queremos o maior. 'LM' significa 'Largest Magnitude' (maior magnitude), o resultado é um array, então pegamos o primeiro elemento, usamos a parte real para evitar pequenos componentes e problemas de precisão numérica. O alpha calcula um número um pouco menor que seu máximo teórico, e é usando 99% do valor máximo por segurança.
+
+~~~Python
+# Obtenha a matriz de adjacência em um formato que o SciPy
+A = nx.to_scipy_sparse_array(lcc_, nodelist=lcc_.nodes())
+# Calculo do maior autovalor (raio espectral)
+raio_espectral = np.real(linalg.eigs(A, k=1, which='LM')[0][0])
+# O alpha
+alpha = (1 / raio_espectral) * 0.99  
+print(f"Raio Espectral Calculado: {raio_espectral:.4f}")
+print(f"Alpha seguro para usar: {alpha:.4f}")
+# 4. Rode novamente a centralidade de Katz com o alpha calculado para maixo de 1000 iterações.
+katz_centrality = nx.katz_centrality(lcc_, alpha=alpha, max_iter=1000) 
+~~~
+
+### Centradilidade PageRank.
+
+~~~Python
+pagerank_centrality = nx.pagerank(lcc_)
+~~~
+
+### Centradilidade Betwenness.
+
+~~~Python
+betweenness_centrality = nx.betweenness_centrality(lcc_, k=100)
+~~~
+
+### Visualização e Organização dos dados das Centralidades
+
+Foi organizado os Dados e Cálculo da Média, criando um DataFrame do pandas para melhor visualização e manipulação, o calculo da média sobre as quatro medidas de centralidade para cada nodo, foi ordenando os resultados pela média para facilitar a interpretação, feito um arredondando para 4 casas decimais.
+    
+
+~~~Python
+# Criando um DataFrame do pandas
+df_centrality = pd.DataFrame({
+    'Autovetor': pd.Series(eigenvector_centrality),
+    'Katz': pd.Series(katz_centrality),
+    'PageRank': pd.Series(pagerank_centrality),
+    'Betweenness': pd.Series(betweenness_centrality)
+})
+# Calculando a média
+df_centrality['Média'] = df_centrality.mean(axis=1)
+# Ordenando os resultados
+df_centrality_sorted = df_centrality.sort_values(by='Média', ascending=False)
+# Resultado
+print("Tabela de Centralidades dos Nodos:")
+print(df_centrality_sorted.round(4).head()) 
+~~~
+
+### Configurações para histograma
+
+O Histograma foi  configurando o estilo do plot usando **seaborn-v0_8-whitegrid**, com 5 bins , color e edgecolor que se destacam com o estilo escolhido, utilizado a escala logaritmica no eixo y para melhorar a visualização, adicionando títulos e legendas correspondentes as médias centralizadas.
+  
+
+~~~Python
+# Plot do Histograma
+# Configurando o estilo do plot
+plt.style.use('seaborn-v0_8-whitegrid')
+plt.figure(figsize=(10, 6))
+plt.hist(df_centrality['Média'], bins=5, color='skyblue', edgecolor='black')
+# Adicionando títulos e legendas
+plt.title('Histograma da Média das Centralidades', fontsize=16)
+plt.xlabel('Média das Centralidades', fontsize=12)
+plt.ylabel('Frequência (Número de Nodos)', fontsize=12)
+plt.yscale('log')
+# Exibindo o gráfico
+plt.show()
+~~~
+
+### H. Desenhar o subgrafo com os 1000 nodos com maior PageRank. A cor do nodo deve representar o seu valor de PageRank. Usar a rede do item (g).
+
+Abaixo segue a descrição do código:
+
+Converte a variavel **pagerank_centrality** para uma Serie do pandas para facilitar a ordenação, ordenando os nodos pelo valor de PageRank em ordem decrescente e pegando os 1000 primeiros. É criando o subgrafo que contém apenas os nodos da lista top_1000_nodes, para a visualização foi usando um fundo escuro para destacar as cores, e foi utilizando o layout 'spring' trata os nodos como massas e as arestas como molas, pegando os valores de PageRank apenas para os nodos do subgrafo, usando um mapa de cores vibrante (plasma), adicionando uma barra de cores para mapear cores a valores de PageRank, foi remove os eixos para melhor representar o plot.
+
+
+~~~Python
+# Convertendo o dicionário para uma Series do pandas para facilitar a ordenação
+pagerank_series = pd.Series(pagerank_centrality)
+
+# Ordenando os nodos pelo valor de PageRank em ordem decrescente e pegando os 1000 primeiros
+top_1000_nodes = pagerank_series.nlargest(1000).index.tolist()
+print("Top 1000 nodos com maior PageRank identificados.")
+
+# Criação do Subgrafo
+
+S = G.subgraph(top_1000_nodes)
+print(f"Subgrafo criado com {S.number_of_nodes()} nodos e {S.number_of_edges()} arestas.")
+
+# Visualização do Subgrafo
+print("Preparando a visualização do subgrafo...")
+plt.style.use('dark_background') # Usando um fundo escuro para destacar as cores
+fig, ax = plt.subplots(figsize=(16, 16))
+
+# Posição dos nodos para a visualização
+pos = nx.spring_layout(S, seed=42, iterations=50)
+
+# Pegando os valores de PageRank apenas para os nodos do subgrafo
+node_colors = [pagerank_centrality[node] for node in S.nodes()]
+
+# Desenhando o grafo
+nodes = nx.draw_networkx_nodes(
+    S,
+    pos,
+    node_size=50,
+    node_color=node_colors,
+    cmap=plt.cm.plasma # Usando um mapa de cores vibrante (plasma)
+)
+edges = nx.draw_networkx_edges(S, pos, alpha=0.1, edge_color='gray')
+
+# Adicionando uma barra de cores para mapear cores a valores de PageRank
+sm = plt.cm.ScalarMappable(cmap=plt.cm.plasma, norm=plt.Normalize(vmin=min(node_colors), vmax=max(node_colors)))
+sm._A = []
+cbar = plt.colorbar(sm, ax=ax, shrink=0.8)
+cbar.set_label('Valor de PageRank', rotation=270, labelpad=20, fontsize=14)
+
+# Configurações finais do plot
+ax.set_title('Subgrafo dos 1000 Nodos com Maior PageRank', fontsize=20)
+plt.axis('off') # Remove os eixos
+print("Plot gerado. Exibindo a imagem...")
+plt.show()
+~~~
