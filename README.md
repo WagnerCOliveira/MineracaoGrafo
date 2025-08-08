@@ -9,6 +9,15 @@ Tabela de conteúdos
    * [Acessando Virtualenv](#acessando-virtualenv---wsl-linux)
    * [Baixando e Descompactador de Arquivos](#baixando-e-descompactador-de-arquivos)
    * [Atividade - Disciplina de Mineração em Grafo](#atividade-1---disciplina-de-mineração-em-grafo)
+     * [Letra A](#a-tamanho-da-rede-número-de-nós)
+     * [Letra B](#b-número-de-links-arestas)
+     * [Letra C](#c-grau-médio-average-degree)
+     * [Letra D](#d-distribuição-de-graus-degree-distribution)
+     * [Letra E](#e-média-das-distâncias-entre-pares-average-shortest-path-length---aspl)
+     * [Letra F](#f-diâmetro-da-rede-diameter)
+     * [Letra G](#g-escolher-uma-rede-das-10-redes-empiricas-e-calcular-a-centradilidade-dos-nodos-usando-autovetor-katz-pagerank-betwenness-calcular-a-media-delas-assim-como-plotar-o-histograma)
+     * [Letra H](#h-desenhar-o-subgrafo-com-os-1000-nodos-com-maior-pagerank-a-cor-do-nodo-deve-representar-o-seu-valor-de-pagerank-usar-a-rede-do-item-g)
+     * [Letra I](#i-desafio-repetir-as-análises-de-a---h-mas-com-uma-rede-encontrada-por-você)
    * [Estatística Descritiva de Redes Empíricas Utilizando NetworkX](#análise-estatística-descritiva-de-redes-empíricas-utilizando-networkx)
    * [Referências](#referências)
    * [Contribuição](#contribuição)
@@ -139,6 +148,7 @@ Fazer o download do conjunto de redes empiricas https://networksciencebook.com/t
     * Calcular a media delas assim como plotar o histograma.
   * Desenhar o subgrafo com os 1000 nodos com maior PageRank. 
     * A cor do nodo deve representar o seu valor de PageRank. Usar a rede do item (g).
+  * Desafio: Repetir as análises de a) - h) mas com uma rede encontrada por você.
 
 
 Análise Estatística Descritiva de Redes Empíricas Utilizando NetworkX
@@ -148,6 +158,24 @@ Análise Estatística Descritiva de Redes Empíricas Utilizando NetworkX
 ### **I. Introdução**
 
 O objetivo principal realizar uma análise estatística descritiva abrangente de uma rede empírica, utilizando a biblioteca NetworkX em Python. A análise visa caracterizar as propriedades estruturais da rede para inferir sua eficiência, robustez e potencial para o fluxo de informações. Serão calculadas e interpretadas métricas específicas da rede, incluindo o tamanho da rede (número de nós), o número de links (arestas), o grau médio, a distribuição de graus, a média das distâncias entre pares e o diâmetro da rede.
+
+Para cara rede foi criado um notebook com o proprio nome do dataset, e dentro de cata notebook tem os códigos e explicações, com excessão da rede aeroporto que foi criada apartir de um arquivo .csv.
+
+
+Dataset                     |   Notebook
+:--------------------       | :---------------
+actor.edgelist.txt          | actor.edgelist.ipynb
+citation.edgelist.txt       | citation.edgelist.ipynb
+collaboration.edgelist.txt  | collaboration.edgelist.ipynb
+email.edgelist.txt          | email.edgelist.ipynb
+internet.edgelist.txt       | internet.edgelist.ipynb
+metabolic.edgelist.txt      | metabolic.edgelist.ipynb
+phonecalls.edgelist.txt     | phonecalls.edgelist.ipynb
+powergrid.edgelist.txt      | powergrid.edgelist.ipynb
+protein.edgelist.txt        | protein.edgelist.ipynb
+www.edgelist.txt            | www.edgelist.ipynb
+resumo_anual_2025.csv       | aeroportos.ipynb
+
 
 ### **II. Metodologia: Carregamento e Representação da Rede**
 
@@ -282,7 +310,6 @@ plt.grid(True, which="both", ls="-", alpha=0.2)
 plt.show()
 ~~~
 
-Para uma análise mais rigorosa, a distribuição de graus empírica pode ser ajustada estatisticamente a modelos teóricos (e.g., Poisson, Lei de Potência, Exponencial) utilizando métodos como a estimativa de máxima verossimilhança ou testes de hipótese como o teste de Kolmogorov-Smirnov.
 
 **Tabela 2: Distribuição de Frequência de Graus**
 
@@ -295,21 +322,14 @@ Para uma análise mais rigorosa, a distribuição de graus empírica pode ser aj
 
 A Tabela 2 fornece os dados numéricos brutos que fundamentam as representações gráficas da distribuição de graus. Ela permite uma inspeção precisa da frequência de cada valor de grau específico, o que é crucial para verificar os padrões observados nos gráficos, como as contagens exatas de nós "hub" ou a frequência de nós de baixo grau.
 
-Figura 1: Histograma da Distribuição de Graus  
-Esta visualização oferece uma compreensão imediata e intuitiva da forma geral da distribuição de graus, destacando os valores de grau mais comuns e a dispersão da conectividade entre os nós. É uma ferramenta fundamental para a exploração inicial da heterogeneidade da rede.  
-Figura 2: Distribuição de Graus em Escala Log-Log  
-Este gráfico de dispersão é indispensável para identificar se a rede empírica exibe uma distribuição de graus de lei de potência (scale-free). Se os pontos de dados se aproximam de uma linha reta nesta escala, isso sugere fortemente a presença de nós "hub" e tem implicações profundas para a robustez da rede e o fluxo de informações. Esta visualização é crítica para distinguir redes empíricas de modelos teóricos de grafos aleatórios.  
-A forma identificada da distribuição de graus possui implicações profundas para a resiliência da rede e a propagação de informações. Redes de lei de potência (scale-free) são notavelmente robustas a falhas aleatórias de nós, pois a remoção de um nó aleatório é improvável de atingir um hub. No entanto, elas são altamente vulneráveis a ataques direcionados a seus nós hub críticos. Em contraste, redes aleatórias são mais suscetíveis à fragmentação por remoção aleatória de nós. Além disso, os hubs em redes de lei de potência atuam como emissores eficientes, facilitando a rápida disseminação de informações ou doenças. Essa relação direta de causa e efeito entre a propriedade estrutural da rede (distribuição de graus) e suas características funcionais (robustez, difusão) é um aspecto crucial da análise.
-
 ### **E. Média das Distâncias entre Pares (Average Shortest Path Length - ASPL)**
 
 A média das distâncias entre pares, denotada como ⟨L⟩, é definida como o número médio de passos (arestas) ao longo dos caminhos mais curtos para todos os pares possíveis de nós na rede. Serve como uma medida crucial da eficiência da rede no transporte de informações ou massa. Um ASPL menor geralmente indica uma rede mais eficiente, interconectada e facilmente navegável, onde a informação pode viajar rapidamente entre quaisquer dois pontos.
 
-O NetworkX fornece a função nx.average\_shortest\_path\_length(G, weight=None, method=None) para este cálculo. No entanto, é crucial observar que esta função é definida para grafos conectados. Ela levanta um
+O NetworkX fornece a função nx.average\_shortest\_path\_length(G, weight=None, method=None) para este cálculo. No entanto, é crucial observar que esta função é definida para grafos conectados. Ela levanta um NetworkXError se o grafo não for conectado (para grafos não direcionados) ou não for fortemente conectado (para grafos direcionados).
 
-NetworkXError se o grafo não for conectado (para grafos não direcionados) ou não for fortemente conectado (para grafos direcionados).
+**Manuseio de Grafos Desconectados:** Se a rede for desconectada, o ASPL para o grafo inteiro é indefinido. Nesses casos, a prática padrão é calcular o LCC para o maior componente conectado. O relatório deve primeiro identificar esses componentes usando nx.connected_components(G) para grafos não direcionados e em seguida, achar o maior componente conectado com a função MAX e parametro key=len, logo após criase um subgrafo com o maior componente conectado e por fim calcula o ASPL.
 
-**Manuseio de Grafos Desconectados:** Se a rede for desconectada, o ASPL para o grafo inteiro é indefinido. Nesses casos, a prática padrão é calcular o LCC para o maior componente conectado. O relatório deve primeiro identificar esses componentes (usando nx.connected_components(G) para grafos não direcionados e em seguida, achar o maior componente conectado com a função MAX e parametro key=len, logo após criase um subgrafo com o maior componente conectado e por fim calcula o ASPL.
 
 ~~~Python
 
@@ -512,4 +532,37 @@ ax.set_title('Subgrafo dos 1000 Nodos com Maior PageRank', fontsize=20)
 plt.axis('off') # Remove os eixos
 print("Plot gerado. Exibindo a imagem...")
 plt.show()
+~~~
+
+### I. Desafio: Repetir as análises de A - H mas com uma rede encontrada por você.
+
+Retirado dataset deste [link](https://www.gov.br/anac/pt-br/assuntos/dados-e-estatisticas/dados-estatisticos) dos voos no ano de 2025, que por sua vez utiliza dados dos aeroportos de origem e destino no mundo, foi criado uma rede que corelaciona os voos dos aeroportos de origem a seus destinos respectivamente.
+
+Para Utilização deste dataset, foi utilizado o pandas para adequação e criação do Grafo, foi lido o arquivo, separado as colunas alvo e criado um grafo, e por sua vez executados os passos de A até H.
+
+
+~~~Python
+
+# Lendo Arquivo
+df = pd.read_csv('resumo_anual_2025.csv', sep=';', encoding='utf-8')
+
+# Separando as colunas para criação do Grafo
+df_2025 = df[
+    [
+        'AEROPORTO DE ORIGEM (SIGLA)', 
+        'AEROPORTO DE DESTINO (SIGLA)',
+        'AEROPORTO DE ORIGEM (PAS)'
+    ]
+]
+df_2025
+
+# Criando um grafo vazio
+G = nx.Graph()
+
+# Adicione vértices e arestas ao grafo criando anteriormente.
+for index, row in df.iterrows():
+    G.add_node(row['AEROPORTO DE ORIGEM (SIGLA)'])
+    G.add_node(row['AEROPORTO DE DESTINO (SIGLA)'])
+    G.add_edge(row['AEROPORTO DE ORIGEM (SIGLA)'], row['AEROPORTO DE DESTINO (SIGLA)'])
+
 ~~~

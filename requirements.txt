@@ -2,6 +2,7 @@ networkx
 matplotlib
 numpy
 pandas
+geopandas
 ipykernel
 jupyterlab
 scipy
