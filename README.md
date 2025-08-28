@@ -159,7 +159,7 @@ Análise Estatística Descritiva de Redes Empíricas Utilizando NetworkX
 
 O objetivo principal realizar uma análise estatística descritiva abrangente de uma rede empírica, utilizando a biblioteca NetworkX em Python. A análise visa caracterizar as propriedades estruturais da rede para inferir sua eficiência, robustez e potencial para o fluxo de informações. Serão calculadas e interpretadas métricas específicas da rede, incluindo o tamanho da rede (número de nós), o número de links (arestas), o grau médio, a distribuição de graus, a média das distâncias entre pares e o diâmetro da rede.
 
-Para cara rede foi criado um notebook com o proprio nome do dataset, e dentro de cata notebook tem os códigos e explicações, com excessão da rede aeroporto que foi criada apartir de um arquivo .csv.
+Para cada rede foi criado um notebook com o proprio nome do dataset, e dentro de cata notebook tem os códigos e explicações, com excessão da rede aeroporto que foi criada apartir de um arquivo .csv.
 
 
 Dataset                     |   Notebook
@@ -175,6 +175,11 @@ powergrid.edgelist.txt      | powergrid.edgelist.ipynb
 protein.edgelist.txt        | protein.edgelist.ipynb
 www.edgelist.txt            | www.edgelist.ipynb
 resumo_anual_2025.csv       | aeroportos.ipynb
+iata-icao.csv               | aeroportos_geomap.ipynb
+
+Para o item desafio foi gerado um geomapa com as geolocalizações dos aeroportos de origem e destino com papel dos (nodes) e suas viagens com sendo suas arestas, mais [abaixo](#i-desafio-repetir-as-análises-de-a---h-mas-com-uma-rede-encontrada-por-você) tem suas explicações, como também o seu notebook explica alguns pontos importantes.
+
+![Geo Mapa](imagens/geomapa.png)
 
 
 ### **II. Metodologia: Carregamento e Representação da Rede**
@@ -566,3 +571,14 @@ for index, row in df.iterrows():
     G.add_edge(row['AEROPORTO DE ORIGEM (SIGLA)'], row['AEROPORTO DE DESTINO (SIGLA)'])
 
 ~~~
+
+### GeoMapa
+
+Foi adicionado novo notebook **aeroportos_geomap.ipynb** com a formação de geomapa pintando a "origem" e "destino" de todos os voos do gafro criado com dataset de Aeroportos.
+
+No notebook contem uma analise exploratória de um novo dataset neste arquivo csv [**iata-icao.csv**](https://github.com/ip2location/ip2location-iata-icao/blob/master/iata-icao.csv) que contem a posição geografica de todos os aeroportos do mundo, e também com as sigras IATA e ICAO, cujo o significado IATA (International Air Transport Association) é uma associação comercial que define padrões para a aviação comercial e de passageiros, enquanto a ICAO (International Civil Aviation Organization) é uma agência da ONU que cria as regras de aviação civil internacional e os códigos alfanuméricos usados em planos de voo e comunicações técnicas.
+
+Foi escolhido esse dataset para referenciar a sigla ICAO com a sigla do dado extraido do Ibge e mesclando as colunas necessárias em um dataframe para ser criado um novo Grafo preparado para receber as pocições geograficas e montar um mapa mundial com as rotas do voos.
+
+Foi utilizado a bibliotecas **matplotlib** em conjunto com a bibioteca **mpl_toolkits**, a classe **Basemap** que renderiza as geolocalizações dos aeroportos com os nós e arestas.
+
